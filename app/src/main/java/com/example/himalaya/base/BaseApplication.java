@@ -2,6 +2,7 @@ package com.example.himalaya.base;
 
 import android.app.Application;
 
+import com.example.himalaya.utils.LogUtil;
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
 
 public class BaseApplication extends Application {
@@ -13,5 +14,6 @@ public class BaseApplication extends Application {
         mXimalaya.setAppkey("af1d317b871e0e7e2ce45872caa34d9a");
         mXimalaya.setPackid("com.humaxdigital.automotive.ximalaya");
         mXimalaya.init(this ,mAppSecret);
+        LogUtil.init(getPackageName(),false);
     }
 }
