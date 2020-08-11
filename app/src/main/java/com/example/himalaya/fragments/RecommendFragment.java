@@ -1,57 +1,109 @@
 package com.example.himalaya.fragments;
 
-import android.util.Log;
+import android.graphics.Rect;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.himalaya.R;
+import com.example.himalaya.adapters.RecommendListAdapter;
 import com.example.himalaya.base.BaseFragment;
-import com.example.himalaya.utils.Constants;
+import com.example.himalaya.interfaces.IReCommendViewCallback;
+import com.example.himalaya.presenters.RecommendPresenter;
 import com.example.himalaya.utils.LogUtil;
-import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
-import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
-import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
+import com.example.himalaya.utils.UIUtil;
+import com.example.himalaya.views.UILoader;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
-import com.ximalaya.ting.android.opensdk.model.album.CategoryRecommendAlbumsList;
-import com.ximalaya.ting.android.opensdk.model.album.DiscoveryRecommendAlbums;
-import com.ximalaya.ting.android.opensdk.model.album.DiscoveryRecommendAlbumsList;
-import com.ximalaya.ting.android.opensdk.model.album.GussLikeAlbumList;
-import com.ximalaya.ting.android.opensdk.model.category.Category;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class RecommendFragment extends BaseFragment {
+public class RecommendFragment extends BaseFragment implements IReCommendViewCallback, UILoader.onReTryListener {
     private static final String TAG = "RecommendFragment";
+    private RecyclerView recommend_list;
+    private UILoader mUILoader;
+    private RecommendListAdapter adapter;
+    private RecommendPresenter presenter;
     @Override
-    public View loadView(LayoutInflater inflater, ViewGroup container) {
+    public View loadView(final LayoutInflater inflater, ViewGroup container) {
+        mUILoader=new UILoader(getContext()) {
+            @Override
+            protected View getSuccessView(ViewGroup container) {
+                return onSuccessView(inflater,container);
+            }
+        };
+        mUILoader.setOnReTryListener(this);
+        presenter=RecommendPresenter.newInstance();
+        presenter.registerRecommendViewCallback(this);
+        presenter.getReCommendList();
+
+        if(mUILoader.getParent() instanceof  ViewGroup){
+            ((ViewGroup)mUILoader.getParent()).removeView(mUILoader);
+        }
+        return mUILoader;
+    }
+
+    private View onSuccessView(LayoutInflater inflater,ViewGroup container) {
+        LogUtil.d(TAG,"onSuccessView");
         View view=inflater.inflate(R.layout.fragment_recomment,container,false);
-        getRecommendList();
+        recommend_list=view.findViewById(R.id.recommend_list);
+        LinearLayoutManager manager=new LinearLayoutManager(getContext());
+        recommend_list.setLayoutManager(manager);
+        recommend_list.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                outRect.top= UIUtil.dip2px(getContext(),5);
+                outRect.bottom= UIUtil.dip2px(getContext(),5);
+                outRect.left=UIUtil.dip2px(getContext(),5);
+                outRect.right=UIUtil.dip2px(getContext(),5);
+            }
+        });
+        manager.setOrientation(RecyclerView.VERTICAL);
+        adapter=new RecommendListAdapter(getContext());
+        recommend_list.setAdapter(adapter);
         return view;
     }
 
-    private void getRecommendList(){
-        Map<String, String> map = new HashMap<>();
-        map.put(DTransferConstants.LIKE_COUNT,Constants.sRECOMMEND_COUNT+"");
-        CommonRequest.getGuessLikeAlbum(map, new IDataCallBack<GussLikeAlbumList>() {
-            @Override
-            public void onSuccess(GussLikeAlbumList gussLikeAlbumList) {
-                List<Album> list=gussLikeAlbumList.getAlbumList();
-                if (list != null) {
-                    int size=list.size();
-                    LogUtil.e(TAG,"albumList size---->"+size);
-                    for (Album album : list) {
-                        LogUtil.e(TAG,album.toString());
-                    }
-                }
-            }
 
-            @Override
-            public void onError(int i, String s) {
-                LogUtil.d(TAG,"get album error ");
-            }
-        });
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(presenter!=null)
+        presenter.unRegisterRecommendViewCallback(this);
+    }
+
+    @Override
+    public void onReCommendListLoad(List<Album> result) {
+        LogUtil.d(TAG,"onReCommendListLoad");
+        adapter.setList(result);
+        adapter.notifyDataSetChanged();
+        mUILoader.updateState(UILoader.UIState.SUCCESS);
+    }
+
+    @Override
+    public void onLoading() {
+        LogUtil.d(TAG,"onLoading");
+        mUILoader.updateState(UILoader.UIState.LOADING);
+    }
+
+    @Override
+    public void onNetworkError() {
+        LogUtil.d(TAG,"onNetworkError");
+        mUILoader.updateState(UILoader.UIState.NETWORK_ERROR);
+    }
+
+    @Override
+    public void onEmpty() {
+        LogUtil.d(TAG,"onEmpty");
+        mUILoader.updateState(UILoader.UIState.EMPTY);
+    }
+
+    @Override
+    public void onReTry() {
+        presenter.getReCommendList();
     }
 }
