@@ -1,5 +1,6 @@
 package com.example.himalaya.fragments;
 
+import android.content.Intent;
 import android.graphics.Rect;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,10 +10,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.himalaya.AlbumDetailActivity;
 import com.example.himalaya.R;
 import com.example.himalaya.adapters.RecommendListAdapter;
 import com.example.himalaya.base.BaseFragment;
 import com.example.himalaya.interfaces.IReCommendViewCallback;
+import com.example.himalaya.presenters.AlbumDetailPresenter;
 import com.example.himalaya.presenters.RecommendPresenter;
 import com.example.himalaya.utils.LogUtil;
 import com.example.himalaya.utils.UIUtil;
@@ -21,7 +24,7 @@ import com.ximalaya.ting.android.opensdk.model.album.Album;
 
 import java.util.List;
 
-public class RecommendFragment extends BaseFragment implements IReCommendViewCallback, UILoader.onReTryListener {
+public class RecommendFragment extends BaseFragment implements IReCommendViewCallback, UILoader.onReTryListener, RecommendListAdapter.OnItemClickListener {
     private static final String TAG = "RecommendFragment";
     private RecyclerView recommend_list;
     private UILoader mUILoader;
@@ -63,6 +66,7 @@ public class RecommendFragment extends BaseFragment implements IReCommendViewCal
         });
         manager.setOrientation(RecyclerView.VERTICAL);
         adapter=new RecommendListAdapter(getContext());
+        adapter.setOnItemClickListener(this);
         recommend_list.setAdapter(adapter);
         return view;
     }
@@ -105,5 +109,15 @@ public class RecommendFragment extends BaseFragment implements IReCommendViewCal
     @Override
     public void onReTry() {
         presenter.getReCommendList();
+    }
+
+
+    @Override
+    public void onItemClick(Album album) {
+        AlbumDetailPresenter albumDetailPresenter=AlbumDetailPresenter.getInstance();
+        albumDetailPresenter.setTargetAlbum(album);
+        LogUtil.d(TAG,"onItemClick:"+album.toString());
+        Intent intent=new Intent(getContext(), AlbumDetailActivity.class);
+        startActivity(intent);
     }
 }

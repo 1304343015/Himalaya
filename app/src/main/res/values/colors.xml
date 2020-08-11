@@ -9,4 +9,6 @@
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="second">#848484</color>
+    <color name="author_text">#979797</color>
+    <color name="subscript_bg">#F97254</color>
 </resources>

@@ -12,12 +12,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.himalaya.R;
+import com.example.himalaya.utils.LogUtil;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RecommendListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final String TAG = "RecommendListAdapter";
     private List<Album> list=new ArrayList<>();
     private Context context;
     public RecommendListAdapter(Context context){
@@ -30,13 +32,22 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecyclerView.View
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view= LayoutInflater.from(context).inflate(R.layout.recommend_item,parent,false);
+        View view= LayoutInflater.from(context).inflate(R.layout.item_recommend,parent,false);
         return new MyHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         MyHolder myHolder= (MyHolder) holder;
+        myHolder.itemView.setTag(position);
+        myHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int i= (int) v.getTag();
+                LogUtil.d(TAG,"onclick:-->"+i);
+                onItemClickListener.onItemClick(list.get(i));
+            }
+        });
         Album album=list.get(position);
         Glide.with(context).load(album.getCoverUrlSmall()).into(myHolder.album_icon);
         myHolder.album_title.setText(album.getAlbumTitle());
@@ -65,4 +76,13 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecyclerView.View
             play_ji=itemView.findViewById(R.id.play_ji);
         }
     }
+
+    private OnItemClickListener onItemClickListener;
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener){
+        this.onItemClickListener=onItemClickListener;
+    }
+    public interface  OnItemClickListener{
+        void onItemClick(Album album);
+    }
+
 }

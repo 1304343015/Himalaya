@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:lines="1"
+            android:singleLine="true"
             android:ellipsize="end"
             android:text="拿破仑·希尔《成功学全书》"
             android:textColor="@color/black"/>
@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/second"
-            android:lines="1"
+            android:singleLine="true"
             android:text="为你开启成功之路，给你指向未来！一起行动"
             android:ellipsize="end"
             android:textSize="12sp"/>
