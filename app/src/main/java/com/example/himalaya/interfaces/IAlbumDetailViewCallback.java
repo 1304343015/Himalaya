@@ -14,4 +14,8 @@ public interface IAlbumDetailViewCallback {
     void onNetworkError();
 
     void onLoading();
+
+    void onRefreshFinished(int size);
+
+    void onLoadMoreFinished(int size);
 }

@@ -4,9 +4,15 @@
     android:layout_height="match_parent"
     android:background="@color/list_bg"
     >
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recommend_list"
+    <com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout
+        android:id="@+id/main_scroll"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+        android:layout_height="match_parent">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recommend_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>
+
 </RelativeLayout>

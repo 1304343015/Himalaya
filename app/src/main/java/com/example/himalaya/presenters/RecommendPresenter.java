@@ -1,5 +1,6 @@
 package com.example.himalaya.presenters;
 
+import com.example.himalaya.api.XmlyApi;
 import com.example.himalaya.interfaces.IReCommendViewCallback;
 import com.example.himalaya.interfaces.IRecommendPresenter;
 import com.example.himalaya.utils.Constants;
@@ -19,6 +20,8 @@ public class RecommendPresenter implements IRecommendPresenter {
     private static final String TAG = "ReCommendPresenter";
     private List<IReCommendViewCallback> callbacks=new ArrayList<>();
     private static RecommendPresenter recommendPresenter=null;
+
+    private List<Album> curList=null;
     private RecommendPresenter(){};
 
     public static RecommendPresenter newInstance(){
@@ -34,9 +37,8 @@ public class RecommendPresenter implements IRecommendPresenter {
     @Override
     public void getReCommendList() {
         loading();
-        Map<String, String> map = new HashMap<>();
-        map.put(DTransferConstants.LIKE_COUNT, Constants.sRECOMMEND_COUNT+"");
-        CommonRequest.getGuessLikeAlbum(map, new IDataCallBack<GussLikeAlbumList>() {
+        XmlyApi xmlyApi=XmlyApi.getXmlyApi();
+        xmlyApi.getAlbumList(new IDataCallBack<GussLikeAlbumList>() {
             @Override
             public void onSuccess(GussLikeAlbumList gussLikeAlbumList) {
                 List<Album> list=gussLikeAlbumList.getAlbumList();
@@ -69,6 +71,7 @@ public class RecommendPresenter implements IRecommendPresenter {
                 for (IReCommendViewCallback callback : callbacks) {
                     callback.onReCommendListLoad(result);
                 }
+                curList=result;
             }else{
                 for (IReCommendViewCallback callback : callbacks) {
                     callback.onEmpty();
@@ -78,6 +81,9 @@ public class RecommendPresenter implements IRecommendPresenter {
 
     }
 
+    public List<Album> getCurList(){
+        return curList;
+    }
     private void loading(){
         for (IReCommendViewCallback callback : callbacks) {
             callback.onLoading();
@@ -94,13 +100,15 @@ public class RecommendPresenter implements IRecommendPresenter {
 
     }
 
-    public void registerRecommendViewCallback(IReCommendViewCallback viewCallback){
+    @Override
+    public void registerViewListener(IReCommendViewCallback viewCallback) {
         if(!callbacks.contains(viewCallback)){
             callbacks.add(viewCallback);
         }
     }
 
-    public void unRegisterRecommendViewCallback(IReCommendViewCallback viewCallback){
+    @Override
+    public void unRegisterViewListener(IReCommendViewCallback viewCallback) {
         if(callbacks.contains(viewCallback)){
             callbacks.remove(viewCallback);
         }

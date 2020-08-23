@@ -29,11 +29,12 @@
                app:tabSelectedTextColor="@color/white"
                app:tabTextColor="@color/title_text"/>
             <RelativeLayout
+                android:id="@+id/iv_search"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent">
                 <ImageView
-                    android:id="@+id/iv_search"
+
                     android:layout_width="15dp"
                     android:layout_height="15dp"
                     android:layout_centerInParent="true"
@@ -45,9 +46,63 @@
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/vp_main"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:overScrollMode="never"
         />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/play_list_line_color"/>
+    <LinearLayout
+        android:id="@+id/main_bottom"
+        android:layout_width="match_parent"
+        android:background="@color/white"
+        android:layout_height="60dp">
+        <ImageView
+            android:id="@+id/main_play_img"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:src="@mipmap/ximalay_logo"
+            android:layout_gravity="center_vertical"
+            />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:orientation="vertical"
+            >
+            <TextView
+                android:id="@+id/main_play_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:layout_marginTop="8dp"
+                android:text="喜马拉雅"/>
 
+            <TextView
+                android:id="@+id/main_play_author"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="作者：Bing"
+                android:layout_marginTop="3dp"/>
+
+        </LinearLayout>
+        <ImageView
+            android:id="@+id/main_control"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@mipmap/play_normal"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15sp"/>
+    </LinearLayout>
 
 </LinearLayout>

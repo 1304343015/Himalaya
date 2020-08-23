@@ -11,4 +11,6 @@
     <color name="second">#848484</color>
     <color name="author_text">#979797</color>
     <color name="subscript_bg">#F97254</color>
+    <color name="pop_text">#5C5555</color>
+    <color name="play_list_line_color">#ECEEF0</color>
 </resources>

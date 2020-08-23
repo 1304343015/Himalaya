@@ -13,13 +13,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.himalaya.AlbumDetailActivity;
 import com.example.himalaya.R;
 import com.example.himalaya.adapters.RecommendListAdapter;
+import com.example.himalaya.base.BaseApplication;
 import com.example.himalaya.base.BaseFragment;
 import com.example.himalaya.interfaces.IReCommendViewCallback;
 import com.example.himalaya.presenters.AlbumDetailPresenter;
 import com.example.himalaya.presenters.RecommendPresenter;
+import com.example.himalaya.utils.Constants;
 import com.example.himalaya.utils.LogUtil;
 import com.example.himalaya.utils.UIUtil;
 import com.example.himalaya.views.UILoader;
+import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 
 import java.util.List;
@@ -35,12 +38,13 @@ public class RecommendFragment extends BaseFragment implements IReCommendViewCal
         mUILoader=new UILoader(getContext()) {
             @Override
             protected View getSuccessView(ViewGroup container) {
+
                 return onSuccessView(inflater,container);
             }
         };
         mUILoader.setOnReTryListener(this);
         presenter=RecommendPresenter.newInstance();
-        presenter.registerRecommendViewCallback(this);
+        presenter.registerViewListener(this);
         presenter.getReCommendList();
 
         if(mUILoader.getParent() instanceof  ViewGroup){
@@ -53,6 +57,8 @@ public class RecommendFragment extends BaseFragment implements IReCommendViewCal
         LogUtil.d(TAG,"onSuccessView");
         View view=inflater.inflate(R.layout.fragment_recomment,container,false);
         recommend_list=view.findViewById(R.id.recommend_list);
+        TwinklingRefreshLayout main_scroll=view.findViewById(R.id.main_scroll);
+        main_scroll.setPureScrollModeOn();
         LinearLayoutManager manager=new LinearLayoutManager(getContext());
         recommend_list.setLayoutManager(manager);
         recommend_list.addItemDecoration(new RecyclerView.ItemDecoration() {
@@ -77,7 +83,7 @@ public class RecommendFragment extends BaseFragment implements IReCommendViewCal
     public void onDestroy() {
         super.onDestroy();
         if(presenter!=null)
-        presenter.unRegisterRecommendViewCallback(this);
+        presenter.unRegisterViewListener(this);
     }
 
     @Override
@@ -86,6 +92,9 @@ public class RecommendFragment extends BaseFragment implements IReCommendViewCal
         adapter.setList(result);
         adapter.notifyDataSetChanged();
         mUILoader.updateState(UILoader.UIState.SUCCESS);
+        Intent intent=new Intent(Constants.LoadFINISHED_EVENT);
+        intent.putExtra("flag",0);
+        BaseApplication.getContext().sendBroadcast(intent);
     }
 
     @Override
@@ -119,5 +128,10 @@ public class RecommendFragment extends BaseFragment implements IReCommendViewCal
         LogUtil.d(TAG,"onItemClick:"+album.toString());
         Intent intent=new Intent(getContext(), AlbumDetailActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onItemLongClick(Album album) {
+
     }
 }

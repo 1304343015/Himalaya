@@ -28,6 +28,7 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecyclerView.View
     public void setList(List<Album> list){
         this.list.clear();
         this.list.addAll(list);
+        notifyDataSetChanged();
     }
     @NonNull
     @Override
@@ -45,7 +46,17 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecyclerView.View
             public void onClick(View v) {
                 int i= (int) v.getTag();
                 LogUtil.d(TAG,"onclick:-->"+i);
+                if(onItemClickListener!=null)
                 onItemClickListener.onItemClick(list.get(i));
+            }
+        });
+        myHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                int i= (int) v.getTag();
+                if(onItemClickListener!=null)
+                    onItemClickListener.onItemLongClick(list.get(i));
+                return true;
             }
         });
         Album album=list.get(position);
@@ -83,6 +94,8 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
     public interface  OnItemClickListener{
         void onItemClick(Album album);
+
+        void onItemLongClick(Album album);
     }
 
 }

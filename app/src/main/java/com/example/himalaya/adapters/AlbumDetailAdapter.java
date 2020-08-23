@@ -54,7 +54,7 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter {
             @Override
             public void onClick(View v) {
                 int i= (int) v.getTag();
-                onDetailItemClickListener.onDetailItemClick(list.get(i));
+                onDetailItemClickListener.onDetailItemClick(list,i);
             }
         });
     }
@@ -85,6 +85,6 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter {
         this.onDetailItemClickListener=onDetailItemClickListener;
     }
     public interface OnDetailItemClickListener{
-        void onDetailItemClick(Track track);
+        void onDetailItemClick(List<Track> trackList,int index);
     }
 }

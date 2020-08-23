@@ -89,7 +89,7 @@ public abstract class UILoader extends FrameLayout {
         return view;
     }
 
-    private View getEmptyView() {
+    protected View getEmptyView() {
         View view= LayoutInflater.from(getContext()).inflate(R.layout.empty_view,this,false);
         return view;
     }

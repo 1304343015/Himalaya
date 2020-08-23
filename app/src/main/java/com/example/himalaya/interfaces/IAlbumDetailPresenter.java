@@ -1,6 +1,8 @@
 package com.example.himalaya.interfaces;
 
-public interface IAlbumDetailPresenter {
+import com.example.himalaya.base.BasePresenter;
+
+public interface IAlbumDetailPresenter extends BasePresenter<IAlbumDetailViewCallback> {
 
     void pull2refresh();
 
@@ -11,8 +13,7 @@ public interface IAlbumDetailPresenter {
     void loading();
 
     void networkError();
-    void registerOnDetailViewListener(IAlbumDetailViewCallback onDetailViewListener);
 
-    void unRegisterOnDetailViewListener(IAlbumDetailViewCallback onDetailViewListener);
+
 
 }
